@@ -110,6 +110,14 @@ export const createOrder = async (req, res) => {
         });
       }
 
+            // Create shipment for the new order
+      await tx.shipment.create({
+        data: {
+          oid: newOrder.oid,
+          status: "Pending",
+        },
+      });
+
       return tx.orders.findUnique({
         where: { oid: newOrder.oid },
         include: {
@@ -118,6 +126,7 @@ export const createOrder = async (req, res) => {
               product: true,
             },
           },
+          shipment: true,
         },
       });
     });

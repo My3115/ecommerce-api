@@ -39,9 +39,10 @@ export const register = async (req, res) => {
     }
 
     // 3. Find Customer role
+    // 3. Find normal role
     const customerRole = await prisma.role.findFirst({
       where: {
-        rolename: "Customer",
+        rolename: "normal",
       },
     });
 
@@ -52,10 +53,11 @@ export const register = async (req, res) => {
       });
     }
 
-    // 4. Find Basic membership
+    // 4. Find Normal membership
     const basicMembership = await prisma.membership.findFirst({
       where: {
-        mname: "Basic",
+        mname: "Normal",
+        score: 10,
       },
     });
 
