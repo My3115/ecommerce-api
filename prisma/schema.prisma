@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model membership {
+  mid   Int    @id @default(autoincrement())
+  mname String @db.VarChar(50)
+  score Int
+  user  user[]
+}
+
+model order_detail {
+  odid     Int     @id @default(autoincrement())
+  oid      Int
+  pid      Int
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
+  orders   orders  @relation(fields: [oid], references: [oid])
+  product  product @relation(fields: [pid], references: [pid])
+}
+
+model orders {
+  oid          Int            @id @default(autoincrement())
+  uid          Int
+  createat     DateTime       @default(now())
+  order_detail order_detail[]
+  user         user           @relation(fields: [uid], references: [uid])
+  shipment     shipment[]
+}
+
+model product {
+  pid          Int            @id @default(autoincrement())
+  pname        String         @db.VarChar(100)
+  price        Decimal        @db.Decimal(10, 2)
+  quantity     Int
+  order_detail order_detail[]
+}
+
+model role {
+  roleid   Int    @id @default(autoincrement())
+  rolename String @db.VarChar(50)
+  user     user[]
+}
+
+model shipment {
+  shipid Int    @id @default(autoincrement())
+  oid    Int
+  status String @db.VarChar(50)
+  orders orders @relation(fields: [oid], references: [oid])
+}
+
+model user {
+  uid        Int        @id @default(autoincrement())
+  username   String     @unique @db.VarChar(50)
+  fullname   String     @db.VarChar(100)
+  password   String     @db.VarChar(255)
+  roleid     Int
+  mid        Int
+  orders     orders[]
+  membership membership @relation(fields: [mid], references: [mid])
+  role       role       @relation(fields: [roleid], references: [roleid])
+}
